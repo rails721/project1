@@ -1,0 +1,85 @@
+For Rails 7.2.1, the default asset management system is Import Maps. Let’s integrate Bootstrap using Import Maps in a modern Rails setup.
+
+Step 1: Install Bootstrap via Import Maps
+First, add Bootstrap and Popper.js to your Import Maps. Run the following commands:
+
+bash
+Copy code
+./bin/importmap pin bootstrap
+./bin/importmap pin @popperjs/core
+This will add Bootstrap and Popper.js to your config/importmap.rb file.
+
+Step 2: Import Bootstrap in the application.js
+Open app/javascript/application.js and import Bootstrap and Popper.js:
+
+javascript
+Copy code
+import "bootstrap"
+import "@popperjs/core"
+Step 3: Add Bootstrap Stylesheets
+Since Rails 7+ uses CSS bundling, you need to install the required Bootstrap stylesheets.
+
+Run the following command to install the necessary CSS files using cssbundling-rails:
+
+bash
+Copy code
+rails css:install:bootstrap
+This will create an app/assets/stylesheets/application.bootstrap.scss file, which includes Bootstrap styles.
+
+Step 4: Ensure CSS is Loaded
+Make sure that the correct stylesheets are being referenced in the app/views/layouts/application.html.erb layout file.
+
+Confirm that this line exists in the <head> section:
+
+erb
+Copy code
+<%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+This tag loads your stylesheets, including the Bootstrap styles you just installed.
+
+Step 5: Customize Bootstrap (Optional)
+You can now customize Bootstrap by modifying the app/assets/stylesheets/application.bootstrap.scss file. For example, you can import only specific Bootstrap components or override Bootstrap variables:
+
+scss
+Copy code
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+
+// Override variables here
+
+@import "bootstrap/scss/bootstrap";
+Step 6: Update Views to Use Bootstrap Classes
+Now that Bootstrap is set up, you can start using Bootstrap classes in your views.
+
+For example, update the app/views/layouts/application.html.erb file to use Bootstrap's layout classes:
+
+erb
+Copy code
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Master</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Master</a>
+      </div>
+    </nav>
+
+    <div class="container mt-4">
+      <%= yield %>
+    </div>
+  </body>
+</html>
+Step 7: Test the Integration
+Now start your Rails server and open your application:
+
+bash
+Copy code
+rails server
