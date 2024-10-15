@@ -526,3 +526,103 @@ Now your index.html.erb view displays a list of tasks, along with their associat
 
 
 
+
+
+
+
+
+
+
+
+Create comment.html.erb where show all which are in index.html.erb of task
+ChatGPT said:
+ChatGPT
+To create a separate comments.html.erb view that shows all comments associated with tasks, along with the task name, task type, and status (similar to the layout in the index.html.erb), you can follow these steps:
+
+Step 1: Create comments.html.erb
+Create a new view template called comments.html.erb to display all tasks and their associated comments. The structure will be similar to the task index.html.erb, but here you’ll focus on showing the comments.
+
+In app/views/tasks/comments.html.erb, add the following code:
+
+erb
+Copy code
+<h1>All Task Comments</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Task Name</th>
+      <th>Task Type</th>
+      <th>Status</th>
+      <th>Comments</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @tasks.each do |task| %>
+      <tr>
+        <td><%= task.task_name %></td>
+        <td><%= task.task_type.name %></td>
+        <td><%= task.status %></td>
+        <td>
+          <ul>
+            <% task.comments.each do |comment| %>
+              <li><%= comment.content %></li>
+            <% end %>
+          </ul>
+          <% if task.comments.empty? %>
+            <p>No comments yet.</p>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to 'Back to Task List', tasks_path %>
+Explanation:
+Task Details: We display the task name, task type, and status.
+Comments Section: We loop through task.comments and show them for each task.
+Back Link: A link at the bottom allows the user to return to the task list.
+Step 2: Add a comments Action in the Tasks Controller
+You will need to create an action in your TasksController to serve this view. In app/controllers/tasks_controller.rb, add the following:
+
+ruby
+Copy code
+def comments
+  @tasks = Task.includes(:task_type, :comments).all
+end
+This action will fetch all tasks along with their associated task types and comments.
+
+Step 3: Update the Routes
+To provide a route for the new comments view, add the following to config/routes.rb:
+
+ruby
+Copy code
+resources :tasks do
+  collection do
+    get 'comments' # This adds a route to /tasks/comments
+  end
+end
+Step 4: Test the View
+Start your Rails server if it isn’t already running:
+
+bash
+Copy code
+rails server
+Visit http://localhost:3000/tasks/comments to see the list of tasks and their associated comments.
+
+Now, your comments.html.erb page will display all tasks and their associated comments, similar to the index.html.erb but focusing on showing the comments. The user can return to the main task list using the "Back to Task List" link at the bottom.
+
+
+
+
+
+
+
+
+
+
+
+
+
+ChatGPT can make mistakes. 
