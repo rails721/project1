@@ -626,3 +626,127 @@ Now, your comments.html.erb page will display all tasks and their associated com
 
 
 ChatGPT can make mistakes. 
+
+
+
+
+
+
+
+
+
+
+When comments/task get error by id
+ChatGPT said:
+ChatGPT
+When you encounter an error related to comments or tasks by ID, such as ActiveRecord::RecordNotFound, it's important to handle this gracefully in your application. Here’s how to manage it:
+
+Step 1: Handle Task or Comment Not Found by ID
+In the TasksController, if a task or a comment is not found by its ID (e.g., when trying to show or edit a task/comment), you can handle this using rescue_from in your controller.
+
+Example: Handling Task Not Found
+In app/controllers/tasks_controller.rb, you can add the following:
+
+ruby
+Copy code
+class TasksController < ApplicationController
+  before_action :set_task, only: [:show, :edit, :update, :destroy]
+
+  rescue_from ActiveRecord::RecordNotFound, with: :task_not_found
+
+  def show
+    # The task is already set by the `set_task` method
+  end
+
+  def edit
+    # The task is already set by the `set_task` method
+  end
+
+  def update
+    # The task is already set by the `set_task` method
+  end
+
+  # Other actions like index, new, create...
+
+  private
+
+  def set_task
+    @task = Task.find(params[:id])
+  end
+
+  def task_not_found
+    flash[:alert] = "Task not found."
+    redirect_to tasks_path
+  end
+end
+This code will handle a scenario where the task is not found (e.g., a user accesses /tasks/999 but the task with ID 999 doesn't exist). Instead of throwing an error, it will show a flash message and redirect to the tasks_path.
+
+Step 2: Handle Comment Not Found by ID
+If you want to handle RecordNotFound for comments as well (for example, in nested resources), you can do something similar.
+
+For example, if you have nested comments inside tasks and want to handle when a comment is not found:
+
+ruby
+Copy code
+class CommentsController < ApplicationController
+  before_action :set_task
+  before_action :set_comment, only: [:edit, :update, :destroy]
+
+  rescue_from ActiveRecord::RecordNotFound, with: :comment_not_found
+
+  def edit
+    # Comment is already set by `set_comment`
+  end
+
+  def update
+    # Comment is already set by `set_comment`
+  end
+
+  # Other actions...
+
+  private
+
+  def set_task
+    @task = Task.find(params[:task_id])
+  end
+
+  def set_comment
+    @comment = @task.comments.find(params[:id])
+  end
+
+  def comment_not_found
+    flash[:alert] = "Comment not found."
+    redirect_to task_path(@task)
+  end
+end
+In this case, if a comment isn't found by its ID within a task (e.g., /tasks/1/comments/999), it will show a flash message and redirect the user to the task's show page.
+
+Step 3: Add Flash Messages in Views
+In your app/views/layouts/application.html.erb, add code to display flash messages if they exist:
+
+erb
+Copy code
+<% if flash[:notice] %>
+  <div class="notice"><%= flash[:notice] %></div>
+<% end %>
+
+<% if flash[:alert] %>
+  <div class="alert"><%= flash[:alert] %></div>
+<% end %>
+This will show the appropriate message to the user when a task or comment is not found.
+
+Step 4: Test the Error Handling
+Start your Rails server:
+
+bash
+Copy code
+rails server
+Visit a task or comment ID that doesn’t exist in the database, such as /tasks/999, and verify that the application displays an appropriate message and redirects the user.
+
+By implementing this, you will gracefully handle scenarios where a task or comment isn't found, preventing application crashes and improving the user experience.
+
+
+
+
+
+
