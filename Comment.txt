@@ -191,3 +191,84 @@ Now your TaskAdminator application allows users to dynamically add and remove co
 
 
 ChatGPT can make mistakes. Check 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Create show.html.erb where only show comments and task name
+ChatGPT said:
+ChatGPT
+To create a show.html.erb view that only displays the task name and its associated comments, follow these steps:
+
+Step 1: Modify the show Action in the Tasks Controller
+In your app/controllers/tasks_controller.rb, add the show action (if it doesn’t already exist):
+
+ruby
+Copy code
+def show
+  @task = Task.find(params[:id])
+end
+Step 2: Create show.html.erb for the Task
+Next, create the app/views/tasks/show.html.erb view:
+
+erb
+Copy code
+<h1>Task Details</h1>
+
+<div>
+  <strong>Task Name:</strong>
+  <%= @task.task_name %>
+</div>
+
+<div>
+  <h3>Comments</h3>
+  <% if @task.comments.any? %>
+    <ul>
+      <% @task.comments.each do |comment| %>
+        <li><%= comment.content %></li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>No comments available for this task.</p>
+  <% end %>
+</div>
+
+<%= link_to 'Back to Tasks', tasks_path %>
+Step 3: Update Routes (Optional)
+If you don’t already have a route for showing tasks, make sure it’s included in config/routes.rb:
+
+ruby
+Copy code
+resources :tasks, only: [:index, :new, :create, :edit, :update, :destroy, :show]
+Step 4: Test the View
+Start your Rails server:
+
+bash
+Copy code
+rails server
+Navigate to a specific task by going to http://localhost:3000/tasks/:id (replace :id with the actual task's ID). You should see the task name along with a list of associated comments.
+
+Now, the show.html.erb view displays only the task name and the associated comments. If there are no comments, it will show a message indicating that no comments are available for the task.
+
+
+
+
+
+
+
+
+
+
